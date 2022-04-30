@@ -1,4 +1,4 @@
-# gshop-client-hhh
+# gshop-client-hhhh
 
 ## Project setup
 ```
