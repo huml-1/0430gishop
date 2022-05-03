@@ -2,60 +2,62 @@
   <!-- 商品分类导航 -->
   <div class="type-nav">
     <div class="container">
-      <div @mouseleave="currentIndex=-1"> 
+      <div @mouseleave="hideFirst" @mouseenter="showFirst"> 
         <h2 class="all">全部商品分类</h2>
-        <div class="sort">
-          <div class="all-sort-list2" @click="toSearch">
-            <div
-              class="item"
-              v-for="(c1, index) in categoryList"
-              :key="c1.categoryId"
-              :class="{ active: currentIndex === index }"
-              @mouseenter="showSubList(index)"
-            >
-              <h3>
-                <!-- <a href="javascript:" @click="$router.push(`/serach?categoryNmae=${c1.categoryName}&category1Id=${c1.categoryId}`)">{{c1.categoryName}}</a> -->
-                <a
-                  href="javascript:"
-                  :data-categoryName="c1.categoryName"
-                  :data-category1Id="c1.categoryId"
-                  >{{ c1.categoryName }}</a
-                >
-              </h3>
-              <div class="item-list clearfix">
-                <div class="subitem">
-                  <dl
-                    class="fore"
-                    v-for="(c2, index) in c1.categoryChild"
-                    :key="c2.categoryId"
+        <transition name="slide">
+          <div class="sort" v-show="isShowFirst">
+            <div class="all-sort-list2" @click="toSearch">
+              <div
+                class="item"
+                v-for="(c1, index) in categoryList"
+                :key="c1.categoryId"
+                :class="{ active: currentIndex === index }"
+                @mouseenter="showSubList(index)"
+              >
+                <h3>
+                  <!-- <a href="javascript:" @click="$router.push(`/serach?categoryNmae=${c1.categoryName}&category1Id=${c1.categoryId}`)">{{c1.categoryName}}</a> -->
+                  <a
+                    href="javascript:"
+                    :data-categoryName="c1.categoryName"
+                    :data-category1Id="c1.categoryId"
+                    >{{ c1.categoryName }}</a
                   >
-                    <dt>
-                      <a
-                        href="javascript:"
-                        :data-categoryName="c2.categoryName"
-                        :data-category2Id="c2.categoryId"
-                        >{{ c2.categoryName }}</a
-                      >
-                    </dt>
-                    <dd>
-                      <em
-                        v-for="(c3, index) in c2.categoryChild"
-                        :key="c3.categoryId"
-                      >
+                </h3>
+                <div class="item-list clearfix">
+                  <div class="subitem">
+                    <dl
+                      class="fore"
+                      v-for="(c2, index) in c1.categoryChild"
+                      :key="c2.categoryId"
+                    >
+                      <dt>
                         <a
                           href="javascript:"
-                          :data-categoryName="c3.categoryName"
-                          :data-category3Id="c3.categoryId"
-                          >{{ c3.categoryName }}</a
+                          :data-categoryName="c2.categoryName"
+                          :data-category2Id="c2.categoryId"
+                          >{{ c2.categoryName }}</a
                         >
-                      </em>
-                    </dd>
-                  </dl>
+                      </dt>
+                      <dd>
+                        <em
+                          v-for="(c3, index) in c2.categoryChild"
+                          :key="c3.categoryId"
+                        >
+                          <a
+                            href="javascript:"
+                            :data-categoryName="c3.categoryName"
+                            :data-category3Id="c3.categoryId"
+                            >{{ c3.categoryName }}</a
+                          >
+                        </em>
+                      </dd>
+                    </dl>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
-        </div>
+        </transition>
       </div>
       <nav class="nav">
         <a href="###">服装城</a>
@@ -72,11 +74,13 @@
 </template>
 
 <script>
+import throttle from "lodash/throttle"
 export default {
   name: "TypeNav",
   data() {
     return {
-      currentIndex: -1,
+      currentIndex: -2,
+      isShowFirst:false,
     };
   },
   computed: {
@@ -85,9 +89,11 @@ export default {
     },
   },
   methods: {
-    showSubList(index) {
-      this.currentIndex = index;
-    },
+    showSubList:throttle(function (index) {
+      if(this.currentIndex!==-2){
+        this.currentIndex = index;
+      }
+    },500),
     toSearch(event) {
       const { categoryname, category1id, category2id, category3id } =
         event.target.dataset;
@@ -101,13 +107,33 @@ export default {
         } else if (category3id) {
           query.category3Id = category3id;
         }
-        this.$router.push({
-          name: "search",
+        const location={
+          name:'search',
           query,
-        });
+          params:this.$route.params
+        }
+        this.$router.push(location);
       }
     },
+    showFirst(){
+      this.currentIndex=-1
+      this.isShowFirst=true
+    },
+    hideFirst(){
+      this.currentIndex=-2
+      if(this.$route.path!=='/'){
+        this.isShowFirst=false
+      }
+
+    }
   },
+  created(){
+    const path=this.$route.path
+    if(path==='/'){
+      this.isShowFirst=true
+    }
+  },
+  
 };
 </script>
 
@@ -151,7 +177,13 @@ export default {
       position: absolute;
       background: #fafafa;
       z-index: 999;
-
+      &.slide-enter-active &.slide-leave-active{
+        transition: all .5s;
+      }
+      &.slide-enter &.slide-leave-to{
+        opacity: 0;
+        height: 0;
+      }
       .all-sort-list2 {
         .item {
           h3 {

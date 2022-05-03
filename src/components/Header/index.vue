@@ -58,15 +58,16 @@ export default {
             // this.$router.push(`/search/${this.keyword}`)
             // 第二种携带参数的方法
             const location={
-                name:'search'
+                name:'search',
+                query:this.$route.query
             }
             if(this.keyword){
                 location.params={
                     keyword:this.keyword
                 }
-                location.query={
-                    keyword2:this.keyword.toUpperCase()
-            }
+            //     location.query={
+            //         keyword2:this.keyword.toUpperCase()
+            // }
             }
             this.$router.push(location)
         }
