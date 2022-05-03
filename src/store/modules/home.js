@@ -1,7 +1,8 @@
-import {reqCategoryList,reqBannerList} from '@/api/index'
+import {reqCategoryList,reqBannerList,reqRecommends} from '@/api/index'
 const state={
     categoryList:[],
-    bannerList:[]
+    bannerList:[],
+    recommendsList:[]
 }
 const mutations={
     RECEIVE_CATEGORYLIST(state,categoryList){
@@ -9,6 +10,9 @@ const mutations={
     },
     RECEIVE_BANNERLIST(state,bannerList){
         state.bannerList=bannerList
+    },
+    RECEIVE_RECOMMENDS(state,recommendsList){
+        state.recommendsList=recommendsList
     }
 
 }
@@ -27,6 +31,13 @@ const actions={
         const bannerList=result.data
         if(result.code===200){
             commit('RECEIVE_BANNERLIST',bannerList)
+        }
+    },
+    async getRecommendsList({commit}){
+        const result=await reqRecommends()
+        const recommendsList=result.data
+        if(result.code===200){
+            commit('RECEIVE_RECOMMENDS',recommendsList)
         }
     }
 }
