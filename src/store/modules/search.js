@@ -1,4 +1,5 @@
 import {reqSearch} from '@/api/index'
+import { toDataURL } from 'qrcode'
 const state = {
     productList: {}, // 搜索出的商品列表相关数据的对象 
   }
@@ -43,6 +44,9 @@ const state = {
 
     goodsList(state){
         return state.productList.goodsList||[]
+    },
+    total(state){
+      return state.productList.total||0
     }
   
   }

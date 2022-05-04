@@ -111,35 +111,13 @@
               </li>
             </ul>
           </div>
-          <div class="fr page">
-            <div class="sui-pagination clearfix">
-              <ul>
-                <li class="prev disabled">
-                  <a href="#">«上一页</a>
-                </li>
-                <li class="active">
-                  <a href="#">1</a>
-                </li>
-                <li>
-                  <a href="#">2</a>
-                </li>
-                <li>
-                  <a href="#">3</a>
-                </li>
-                <li>
-                  <a href="#">4</a>
-                </li>
-                <li>
-                  <a href="#">5</a>
-                </li>
-                <li class="dotted"><span>...</span></li>
-                <li class="next">
-                  <a href="#">下一页»</a>
-                </li>
-              </ul>
-              <div><span>共10页&nbsp;</span></div>
-            </div>
-          </div>
+          <Pagination
+            :currentPage="options.pageNo"
+            :total="total"
+            :pageSize="options.pageSize"
+            :showPageNo="5"
+            @currentChange="getShopList"
+          />
         </div>
       </div>
     </div>
@@ -172,7 +150,7 @@ export default {
     this.getShopList();
   },
   computed: {
-    ...mapGetters(["goodsList"]),
+    ...mapGetters(["goodsList","total"]),
     orderArr() {
       return this.options.order.split(":");
     },
@@ -185,6 +163,9 @@ export default {
     immediate: true,
   },
   methods: {
+    // currentChange(page){
+    //   this.getShopList(page)
+    // },
     updateParams() {
       const { keyword } = this.$route.params;
       const { category1Id, category2Id, category3Id, categoryName } =
@@ -198,7 +179,8 @@ export default {
         categoryName,
       };
     },
-    getShopList() {
+    getShopList(page=1) {
+      this.options.pageNo=page
       this.$store.dispatch("getProductList", this.options);
     },
     removeCateName() {
