@@ -8,7 +8,11 @@ import  './mock/mockServer'
 
 Vue.config.productionTip = false
 Vue.component(TypeNav.name,TypeNav)
+
 new Vue({
+  beforeCreate(){
+    Vue.prototype.$bus=this
+  },
   render: h => h(App),
   router,//所有组件都可以直接访问￥router和$route
   store //$store

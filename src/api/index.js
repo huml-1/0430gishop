@@ -10,3 +10,4 @@ export function reqCategoryList(){
 export const reqBannerList=()=>ajax('/cms/banner')
 export const reqRecommends=()=>mockAjax('/recommends')
 export const reqFloors=()=>mockAjax('/floors')
+export const reqSearch=(searchParams)=>ajax.post('/list',searchParams)
